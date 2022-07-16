@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel")
 const { isValid, isValidBody, isValidString, isValidPhone, isValidEmail, isValidPassword, isValidStreet, isValidPincode, isValidField, isValidObjectId, isValidTitle, isValidSize } = require("../validator/validation")
-const aws = require("../aws/aws")
+const {uploadFile} = require("../aws/aws")
 const bcrypt = require("bcrypt")
 
 
@@ -239,3 +239,6 @@ const updateUserById = async (req, res) => {
         return res.status(500).send({ satus: false, error: err.message })  
     }
 }
+
+
+

@@ -55,7 +55,13 @@ const isValidBody = (reqBody) => {
     return /^[A-Za-z0-9\s\-_,\.;:()]+$/.test(title.trim())
     
   };
-
+ 
+  const isValidNumber=(value)=>{
+    value=parseInt(value)
+    if(value === NaN ) return false;
+    return true
+    
+  }
   
   const isValidSize = (size)=> {
    
@@ -71,6 +77,28 @@ const isValidBody = (reqBody) => {
     return validSize
   }
   
+// const arrCheck=(value)=>{
+//   if (Array.isArray(value)) {
+//     let arr = []
+//     if (value.length === 0) {
+//         return res.status(400).send({ status: false, message: value+" can not be empty array" })
+//     }
+//     value.forEach(x => {
+//         if (isValidSize(x)) {
+//             arr.push(x)
+//         }
+//     })
+//     if (arr.length === 0) {
+//         return res.status(400).send({ status: false, message: value+" can not be empty array" })
+//     }
+//     data[value] = [...arr]
+//     //it's checking value as a string
+// } else if (isValid(value)) {
 
+//     data[value] = value.trim()
+// } else {
+//     return res.status(400).send({ status: false, message: "plz enter "+ value })
+// }
+// }
   
-  module.exports={isValid, isValidBody,isValidString,isValidPhone,isValidEmail,isValidPassword, isValidStreet,isValidPincode,isValidField, isValidObjectId ,isValidTitle,isValidSize}
+  module.exports={isValid, isValidBody,isValidString,isValidPhone,isValidEmail,isValidPassword, isValidStreet,isValidPincode,isValidField, isValidObjectId ,isValidTitle,isValidSize,isValidNumber}
