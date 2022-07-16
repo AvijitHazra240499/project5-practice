@@ -100,5 +100,11 @@ const isValidBody = (reqBody) => {
 //     return res.status(400).send({ status: false, message: "plz enter "+ value })
 // }
 // }
+
+// const keyCheck=(value)=>{
+//   if(isValidBody(value)){
+
+//   }
+// }
   
   module.exports={isValid, isValidBody,isValidString,isValidPhone,isValidEmail,isValidPassword, isValidStreet,isValidPincode,isValidField, isValidObjectId ,isValidTitle,isValidSize,isValidNumber}

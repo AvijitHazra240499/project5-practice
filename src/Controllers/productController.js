@@ -67,6 +67,7 @@ const createProduct=(res,req)=>{
         }
         data.deletedAt=null
         data.isDeleted=false
+        data.isFreeShipping=false
 
         const productData=await productModel.create(data)
 
@@ -137,7 +138,7 @@ const getProductById=(req,res)=>{
     try {
         const productId=req.params.productId
         if(!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "productId not valid" })
-        let productkData= await userModel.findById(productId)
+        let productkData= await userModel.findOne({_id:productId,isDeleted:false})
         if(!productkData) return res.status(404).send({ status: false, message: "product not exist" })
 
         return res.status(200).send({ status: true,data:productkData })
@@ -147,3 +148,110 @@ const getProductById=(req,res)=>{
         return res.status(500).send({ satus: false, error: err.message })   
     }
 }
+
+
+const updateProduct = (req,res)=>{
+    try {
+        const productId=req.params.productId
+        if(!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "productId not valid" })
+        let productkData= await userModel.findOne({_id:productId,isDeleted:false})
+        if(!productkData) return res.status(404).send({ status: false, message: "product not exist" })
+
+        const data=req.body
+        let {title,description,price,currencyId,currencyFormat,style,availableSizes,installments}=data
+
+        let filter={}
+        let uploadedBookImage=null
+        const files=req.files
+        if ((files&&files.length)) {
+            uploadedBookImage = await uploadFile(files[0])
+            filter.productImage=uploadedBookImage
+        }
+
+        if (isValid(title)) {
+            if (!isValidString(title) && !isValidField(title)) {
+                return res.status(400).send({ status: false, message: "title should't contains numbers and should only contains alhabets" })
+            }
+            const titleCheck=await productModel.findOne({title,isDeleted:false})
+            if(titleCheck)return res.status(400).send({ status: false, message: "title already exist" }) 
+            filter.title=title
+        }
+
+        if (isValid(description)) {
+            if (!isValidString(description)) {
+                return res.status(400).send({ status: false, message: "description should't contains numbers and should only contains alhabets" })
+            }
+            filter.description=description
+            
+        }
+
+        if (isValid(price)) {
+            if (!isValidNumber(price)) {
+                return res.status(400).send({ status: false, message: "price should be number" })
+            }
+            filter.price=price
+
+        }
+
+        if (isValid(currencyId)) {
+            if(!["INR"].includes(currencyId)) return res.status(400).send({ status: false, message: "plz provied valid currencyId" })
+            filter.currencyId=currencyId
+            
+        }
+
+        if (isValid(currencyFormat)) {
+            if(!["₹"].includes(currencyFormat))return res.status(400).send({ status: false, message: "currencyFormat ₹ only accepted here" }) 
+            filter.currencyFormat=currencyFormat
+
+        }
+        if (isValid(style)) {
+            if (!isValidString(style)) {
+                return res.status(400).send({ status: false, message: "style should't contains numbers and should only contains alhabets" })
+            }
+            filter.style=style
+
+        }
+        if (isValid(availableSizes)) {
+            if (!isValidSize(availableSizes)) {
+                return res.status(400).send({ status: false, message: "availableSizes should't contains numbers and should only contains alhabets" })
+            }
+            filter.availableSizes=availableSizes
+
+        }
+        if (isValid(installments)) {
+            if (!isValidNumber(installments)) {
+                return res.status(400).send({ status: false, message: "installments should be number" })
+            }
+            filter.installments=installments
+        }
+        const updateData=await productModel.findByIdAndUpdate(productId,filter,{new:true})
+
+        return res.status(200).send({ satus: true,message:"Update Successful",data:updateData })   
+ 
+        
+    } catch (err) {
+        return res.status(500).send({ satus: false, error: err.message })   
+        
+    }
+}
+
+
+const deleteProductById=(req,res)=>{
+    try {
+        let productId=req.params.productId
+        if(!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "productId not valid" })
+        let productData= await userModel.findOne({_id:productId,isDeleted:false})
+        if(!productData) return res.status(404).send({ status: false, message: "product not exist" })
+
+        const deletedProduct=await productModel.findByIdAndUpdate(productId,{isDeleted:false,deletedAt:new Date},{new:true})
+
+        return res.status(200).send({ satus: true, message:"Delete Successful", data:deletedProduct })   
+
+
+    } catch (err) {
+        return res.status(500).send({ satus: false, error: err.message })   
+    }
+}
+
+
+
