@@ -18,7 +18,7 @@ const createCart = (req, res) => {
         let cartData = null
         if (cartId) {
             if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: "cartId not valid" })
-            cartData = await userModel.findOne({ _id: userId, isDeleted: false }).lean()
+            cartData = await cartModel.findOne({ _id: cartId}).lean()
             if (!cartData) return res.status(404).send({ status: false, message: "cart not exist,create one" })
 
         }
@@ -35,7 +35,7 @@ const createCart = (req, res) => {
         if (quantity < 1 || !Number.isInteger(Number(quantity)) || isNaN(quantity)) return res.status(400).send({ status: false, message: "Quantity of item(s) should be a an integer & > 0." })
 
 
-        if (cartData) {
+        if (cartData.items.length!=0) {
             cartData.totalPrice = (productData.price * quantity) + cartData.totalPrice
             cartData.items.push({ productId, quantity })
             cartData.totalIstem = cartData.items.length
