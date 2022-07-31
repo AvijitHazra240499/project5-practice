@@ -5,7 +5,7 @@ const { isValidBody } = require("../validator/validator")
 
 
 
-const createCart = (req, res) => {
+const createCart = async(req, res) => {
     try {
         let userId = req.params.userId
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId not valid" })
@@ -146,5 +146,41 @@ const updatecart = async function (req, res) {
 
     } catch (err) {
         return res.status(500).send({ satus: false, error: error.message })
+    }
+}
+
+
+
+const getCart=async (req,res)=>{
+    try {
+        let userId=req.params.userId
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId not valid" })
+        let checkUserId=await cartModel.findOne({userId})
+        if(!checkUserId) return res.status(404).send({ status: false, message: "No cart,create one" })
+        res.satus(200).send({ status: true, data:checkUserId })
+        
+
+    } catch (error) {
+        return res.status(500).send({ satus: false, error: error.message })
+    }
+}
+
+
+const deleteCart=async (req,res)=>{
+    try {
+        let userId=req.params.userId
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId not valid" })
+        let checkUser=await userModel.findById(userId)
+        if(!checkUser)return res.status(400).send({ status: false, message: "user not found!" })
+        let checkUserId=await cartModel.findOne({userId})
+        if(!checkUserId) return res.status(404).send({ status: false, message: "No cart,create one" })
+        if(!checkUserId.items.length) return res.status(404).send({ status: false, message: "No cart,create one" })
+        const removedProduct = await cartModel.findOneAndUpdate({ userId: userId }, {items:[], totalItems:0,totalPrice:0}, { new: true })
+        return res.status(200).send({ status: true, message: "Delete Successful!",data:removedProduct })
+       
+
+    } catch (error) {
+        return res.status(500).send({ satus: false, error: error.message })
+        
     }
 }

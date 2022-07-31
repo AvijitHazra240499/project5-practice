@@ -1,11 +1,7 @@
-let arr=[{
-    place:"noida",
-    name:"ajij"
-    
-},{
-    place:"Delhi",
-    name:"suman"
-}]
-let b={ place: 'Delhi', name: 'suman' }
-let a=arr.indexOf(b.toString())
-console.log(arr[a])
+let obj={gg:"hh889",hh:"yeifi88",kk:"sara",jj:"899",dd:"uuu"}
+
+// let n={gg,hh,kk}=obj
+let n=obj
+let {gg,hh,kk}=obj
+
+console.log(n)
